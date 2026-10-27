@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule · Tu tiempo, con cariño</title>
+    <link rel="stylesheet" href="./static/styles.css"><link rel="stylesheet" href="./static/fonts.css">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            color: #4A3E56;
+            user-select: auto;
+        }
+
+        /* Responsive backgrounds */
+        .bg-clouds {
+            background-color: #F3EEFF;
+            background-image: radial-gradient(#D8B4F8 1.2px, transparent 1.2px), radial-gradient(#B5EAD7 1.2px, #F3EEFF 1.2px);
+            background-size: 48px 48px;
+            background-position: 0 0, 24px 24px;
+        }
+        
+        .bg-stripes {
+            background-color: #f7f3ff;
+            background-image: repeating-linear-gradient(45deg, #f0e6ff 0, #f0e6ff 15px, #f7f3ff 0, #f7f3ff 30px);
+        }
+
+        .bg-cream-dots {
+            background-color: #FFF9E6;
+            background-image: radial-gradient(#FFDAC1 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+
+        /* Washi tape effect */
+        .washi-tape {
+            position: absolute;
+            height: 26px;
+            width: 110px;
+            background-color: rgba(255, 223, 186, 0.75);
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            backdrop-filter: blur(1px);
+            border-left: 2px dashed rgba(255, 255, 255, 0.6);
+            border-right: 2px dashed rgba(255, 255, 255, 0.6);
+            z-index: 10;
+        }
+
+        .washi-tape-pink {
+            background-color: rgba(255, 183, 178, 0.75);
+            transform: translateX(-50%) rotate(1.5deg);
+        }
+
+        .washi-tape-mint {
+            background-color: rgba(181, 234, 215, 0.75);
+            transform: translateX(-50%) rotate(-1deg);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F3EEFF;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D8B4F8;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #C392F2;
+        }
+
+        /* Checkbox custom style */
+        .kawaii-checkbox {
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2.5px solid #D8B4F8;
+            border-radius: 7px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            background-color: white;
+        }
+        .kawaii-checkbox:checked {
+            background-color: #FFB7B2;
+            border-color: #FFB7B2;
+        }
+        .kawaii-checkbox:checked::after {
+            content: '🌸';
+            position: absolute;
+            font-size: 13px;
+            top: -3px;
+            left: 1px;
+        }
+
+        /* Smooth tab transition */
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.25s ease-in-out;
+        }
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Floating animation for stickers */
+        @keyframes gentle-float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(2deg); }
+        }
+        .float-sticker {
+            animation: gentle-float 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-soft {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+        .pulse-soft {
+            animation: pulse-soft 3s ease-in-out infinite;
+        }
+
+        /* Sticky note pin effect */
+        .sticky-card {
+            border-radius: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .sticky-card:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+<meta name="theme-color" content="#E6E0F8"><style>button{touch-action:manipulation}input,textarea,select{max-width:100%} .syncbar{max-width:56rem;margin:12px auto;padding:10px 16px;background:#fff9e6;border:1px solid #e8d5f5;border-radius:16px;font-size:13px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}.syncbar button{border:1px solid #d8b4f8;border-radius:9px;padding:4px 10px;background:white} #syncStatus{flex:1} #loginOverlay{position:fixed;inset:0;background:#f3eeff;z-index:100;display:grid;place-items:center;padding:20px}#loginOverlay[hidden]{display:none}#loginOverlay form{background:#fff9e6;border:2px solid #d8b4f8;border-radius:26px;padding:28px;width:100%;max-width:420px}#loginOverlay input{display:block;border:1px solid #d8b4f8;border-radius:12px;padding:12px;margin:16px 0;width:100%}#loginOverlay button{background:#b5ead7;padding:12px;border-radius:12px;width:100%} #loginError{color:#924156;margin-top:12px} @media(max-width:480px){input,textarea,select{font-size:16px!important} .nav-tab{padding-left:6px;padding-right:6px} .nav-tab span.hidden{display:inline;font-size:11px} #calendarMonthYear{font-size:20px}}</style><meta name="description" content="Demostración frontend de una agenda kawaii con tareas, notas, calendario y pomodoro. Sin conexión a servicios externos."><link rel="stylesheet" href="./static/schedule.css"><link rel="icon" type="image/png" href="./icons/heart.png"><link rel="apple-touch-icon" href="./icons/heart.png"></head>
+<body id="appBody" class="bg-clouds min-h-screen pb-12 transition-all duration-300">
+
+    <!-- TOP HEADER / NAV BAR -->
+    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b-2 border-pastelBorde shadow-sm px-4 py-3">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3">
+                <div class="schedule-logo"><img src="./icons/heart.png" alt="Corazón de Schedule" width="64" height="64"></div>
+                <div>
+                    <h1 class="font-fredoka text-2xl font-bold text-pastelTexto tracking-wide flex items-center gap-2">
+                        Schedule 
+                    </h1>
+                    <p class="text-xs text-pastelTextoMuted">Tu tiempo, con cariño ♡</p>
+                </div>
+            </div>
+
+            <!-- Pattern Switcher & Date Badge -->
+            <div class="flex items-center gap-2 text-xs font-semibold">
+                <div class="bg-pastelLila/60 p-1 rounded-xl flex gap-1 border border-pastelLilaDark/30">
+                    <button onclick="changeBg('bg-clouds')" title="Fondo Nubes" class="w-7 h-7 rounded-lg bg-white shadow-sm flex items-center justify-center hover:scale-105 transition">☁️</button>
+                    <button onclick="changeBg('bg-stripes')" title="Fondo Rayas Pastel" class="w-7 h-7 rounded-lg bg-white shadow-sm flex items-center justify-center hover:scale-105 transition">🎀</button>
+                    <button onclick="changeBg('bg-cream-dots')" title="Fondo Crema Puntos" class="w-7 h-7 rounded-lg bg-white shadow-sm flex items-center justify-center hover:scale-105 transition">🍦</button>
+                </div>
+                <div id="currentDateBadge" class="bg-pastelCrema border border-pastelRosa/40 text-pastelTexto px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 shadow-sm">
+                    📅 Cargando fecha...
+                </div>
+            </div>
+        </div>
+
+        <!-- NAVIGATION TABS -->
+        <nav class="max-w-3xl mx-auto mt-3 flex justify-around bg-pastelLila/40 p-1.5 rounded-2xl border border-pastelLilaDark/20">
+            <button onclick="switchTab('tab-mi-dia')" id="btn-tab-mi-dia" class="nav-tab flex-1 py-2 px-3 rounded-xl font-fredoka text-sm font-semibold text-pastelTexto transition-all flex items-center justify-center gap-2 bg-white shadow-sm text-pastelTexto">
+                <span>🌸</span> <span class="hidden sm:inline">Mi Día</span>
+            </button>
+            <button onclick="switchTab('tab-calendario')" id="btn-tab-calendario" class="nav-tab flex-1 py-2 px-3 rounded-xl font-fredoka text-sm font-semibold text-pastelTextoMuted hover:text-pastelTexto transition-all flex items-center justify-center gap-2">
+                <span>📅</span> <span class="hidden sm:inline">Calendario</span>
+            </button>
+            <button onclick="switchTab('tab-pendientes')" id="btn-tab-pendientes" class="nav-tab flex-1 py-2 px-3 rounded-xl font-fredoka text-sm font-semibold text-pastelTextoMuted hover:text-pastelTexto transition-all flex items-center justify-center gap-2">
+                <span>📝</span> <span class="hidden sm:inline">Pendientes</span>
+            </button>
+            <button onclick="switchTab('tab-pomodoro')" id="btn-tab-pomodoro" class="nav-tab flex-1 py-2 px-3 rounded-xl font-fredoka text-sm font-semibold text-pastelTextoMuted hover:text-pastelTexto transition-all flex items-center justify-center gap-2">
+                <span>⏱️</span> <span class="hidden sm:inline">Estudio</span>
+            </button>
+            <button onclick="switchTab('tab-recordatorios')" id="btn-tab-recordatorios" class="nav-tab flex-1 py-2 px-3 rounded-xl font-fredoka text-sm font-semibold text-pastelTextoMuted transition-all flex items-center justify-center gap-2"><span>🔔</span><span class="hidden sm:inline">Recordatorios</span></button>
+        </nav>
+    </header>
+
+<div class="syncbar"><span id="syncStatus" role="status" aria-live="polite">🌷 Abriendo demostración…</span><button onclick="exportBackup()">Copia de seguridad</button></div>
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-4xl mx-auto px-4 mt-6">
+
+        <!-- ==================== TAB 1: MI DÍA ==================== -->
+        <section id="tab-mi-dia" class="tab-content active space-y-6">
+            
+            <!-- Greeting Banner -->
+            <div class="relative bg-gradient-to-r from-pastelLila via-pastelRosaLight to-pastelMenta/60 p-6 rounded-3xl border-2 border-white shadow-kawaii overflow-hidden">
+                <div class="relative z-10">
+                    <h2 class="font-fredoka text-2xl md:text-3xl font-bold text-pastelTexto">Tu día, a tu ritmo ♡</h2>
+                    <p class="text-sm text-pastelTexto/80 mt-1">Completa tus metas paso a paso sin prisa. ¡Tú puedes!</p>
+                </div>
+                <!-- Cute SVG Mascot (Sleeping Cactus) -->
+                <div class="absolute right-4 bottom-1 w-24 h-24 md:w-28 md:h-28 float-sticker pointer-events-none opacity-90">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M25 80 C 25 85, 75 85, 75 80 L 70 55 L 30 55 Z" fill="#FFB7B2" stroke="#4A3E56" stroke-width="2.5"/>
+                        <ellipse cx="50" cy="55" rx="22" ry="6" fill="#FFDAC1"/>
+                        <path d="M32 55 C 32 25, 68 25, 68 55 Z" fill="#B5EAD7" stroke="#4A3E56" stroke-width="2.5"/>
+                        <!-- Side arms -->
+                        <path d="M33 45 C 20 45, 20 30, 25 30 C 28 30, 30 38, 33 38" fill="#B5EAD7" stroke="#4A3E56" stroke-width="2.5"/>
+                        <path d="M67 42 C 80 42, 80 27, 75 27 C 72 27, 70 35, 67 35" fill="#B5EAD7" stroke="#4A3E56" stroke-width="2.5"/>
+                        <!-- Flower on head -->
+                        <circle cx="50" cy="25" r="6" fill="#FFB7B2"/>
+                        <circle cx="45" cy="23" r="4" fill="#FFE5E2"/>
+                        <circle cx="55" cy="23" r="4" fill="#FFE5E2"/>
+                        <!-- Sleeping Face -->
+                        <path d="M40 40 Q 44 44 48 40" stroke="#4A3E56" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                        <path d="M52 40 Q 56 44 60 40" stroke="#4A3E56" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                        <ellipse cx="38" cy="44" rx="3" ry="2" fill="#FFB7B2"/>
+                        <ellipse cx="62" cy="44" rx="3" ry="2" fill="#FFB7B2"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Two Columns Layout for Sticky Notes -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                
+                <!-- Main Sticky Note "Lo importante de hoy" -->
+                <div class="md:col-span-7 relative bg-pastelCremaCard p-6 sticky-card border-2 border-pastelRosa/50 shadow-sticky">
+                    <div class="washi-tape"></div>
+                    
+                    <div class="flex items-center justify-between mb-4 border-b-2 border-dashed border-pastelRosa/30 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">📌</span>
+                            <h3 class="font-fredoka text-xl font-bold text-pastelTexto tracking-wide">Lo importante de hoy</h3>
+                        </div>
+                        <span class="text-xs font-bold text-pastelRosa bg-white px-2.5 py-1 rounded-full border border-pastelRosa/30">Prioritarias</span>
+                    </div>
+
+                    <!-- Daily Tasks List -->
+                    <div id="dailyTaskList" class="space-y-3 min-h-[180px]">
+                        <!-- Dynamic items via JS -->
+                    </div>
+
+                    <!-- Add Quick Task -->
+                    <div class="mt-4 pt-3 border-t border-pastelRosa/20 flex gap-2">
+                        <input type="text" id="quickTaskInput" placeholder="Un pequeño pendiente para hoy…" 
+                               class="min-w-0 flex-1 px-3 py-2 text-sm rounded-xl border border-pastelRosa/40 focus:outline-none focus:ring-2 focus:ring-pastelRosa/60 bg-white/80">
+                        <button onclick="addQuickTask()" class="bg-pastelRosa hover:bg-pastelRosa/90 text-white font-bold px-4 py-2 rounded-xl text-sm transition shadow-buttonRosa active:translate-y-1 active:shadow-none">
+                            <span aria-hidden="true">+</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Secondary Note & Motivational Card -->
+                <div class="md:col-span-5 space-y-6">
+                    
+                    <!-- Quick Pink Sticky Note -->
+                    <div class="relative bg-pastelRosaLight p-5 sticky-card border-2 border-pastelRosa shadow-sticky">
+                        <div class="washi-tape washi-tape-mint"></div>
+                        <h4 class="font-fredoka text-lg font-bold text-pastelTexto mb-2 flex items-center justify-between">
+                            <span>📝 Notas Rápidas</span>
+                            <span id="notesSaveLabel" class="text-xs font-normal text-pastelTextoMuted">Conectando…</span>
+                        </h4>
+                        <textarea id="quickNotesTextarea" placeholder="Escribe un recordatorio, una idea o recado rápido..." 
+                                  class="w-full h-28 bg-white/70 border border-pastelRosa/30 rounded-xl p-3 text-sm text-pastelTexto focus:outline-none focus:ring-2 focus:ring-pastelRosa/50 resize-none font-sans"></textarea>
+                    </div>
+
+                    <!-- Motivational Sticker Card -->
+                    <div class="relative bg-pastelMenta/40 p-5 rounded-2xl border-2 border-pastelMentaDark/40 flex items-center gap-4 shadow-sm">
+                        <!-- Bunny SVG Sticker -->
+                        <div class="w-16 h-16 flex-shrink-0 float-sticker">
+                            <svg viewBox="0 0 80 80" fill="none">
+                                <ellipse cx="32" cy="22" rx="6" ry="16" fill="#FFE5E2" stroke="#4A3E56" stroke-width="2"/>
+                                <ellipse cx="48" cy="22" rx="6" ry="16" fill="#FFE5E2" stroke="#4A3E56" stroke-width="2"/>
+                                <ellipse cx="32" cy="22" rx="3" ry="10" fill="#FFB7B2"/>
+                                <ellipse cx="48" cy="22" rx="3" ry="10" fill="#FFB7B2"/>
+                                <circle cx="40" cy="48" r="22" fill="#FFFFFF" stroke="#4A3E56" stroke-width="2"/>
+                                <circle cx="33" cy="45" r="2.5" fill="#4A3E56"/>
+                                <circle cx="47" cy="45" r="2.5" fill="#4A3E56"/>
+                                <polygon points="38,50 42,50 40,53" fill="#FFB7B2"/>
+                                <ellipse cx="28" cy="49" rx="3.5" ry="2" fill="#FFB7B2" opacity="0.6"/>
+                                <ellipse cx="52" cy="49" rx="3.5" ry="2" fill="#FFB7B2" opacity="0.6"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-fredoka text-sm font-semibold text-pastelTexto" id="dailyQuote">
+                                "Un pequeño paso cada día suma un gran resultado. ¡Hazlo con calma!"
+                            </p>
+                            <span class="text-xs text-pastelTextoMuted mt-1 inline-block">✨ Frase del día</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 2: CALENDARIO ==================== -->
+        <section id="tab-calendario" class="tab-content space-y-6">
+            <div class="bg-white/90 p-6 rounded-3xl border-2 border-pastelBorde shadow-sticky">
+                
+                <!-- Calendar Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">🗓️</span>
+                        <h2 id="calendarMonthYear" class="font-fredoka text-2xl font-bold text-pastelTexto">
+                            Mes Año
+                        </h2>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="prevMonth()" class="w-9 h-9 rounded-xl bg-pastelLila hover:bg-pastelLilaDark/40 flex items-center justify-center font-bold text-pastelTexto transition">
+                            <span aria-hidden="true">‹</span>
+                        </button>
+                        <button onclick="nextMonth()" class="w-9 h-9 rounded-xl bg-pastelLila hover:bg-pastelLilaDark/40 flex items-center justify-center font-bold text-pastelTexto transition">
+                            <span aria-hidden="true">›</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Days of Week Header -->
+                <div class="grid grid-cols-7 gap-1 text-center font-fredoka text-sm font-bold text-pastelTextoMuted mb-2">
+                    <div class="py-1">Dom</div>
+                    <div class="py-1">Lun</div>
+                    <div class="py-1">Mar</div>
+                    <div class="py-1">Mié</div>
+                    <div class="py-1">Jue</div>
+                    <div class="py-1">Vie</div>
+                    <div class="py-1">Sáb</div>
+                </div>
+
+                <!-- Days Grid -->
+                <div id="calendarGrid" class="grid grid-cols-7 gap-1 md:gap-2">
+                    <!-- Calendar days generated by JS -->
+                </div>
+            </div>
+
+            <!-- Selected Date Events Card -->
+            <div class="bg-pastelCremaCard p-5 rounded-2xl border-2 border-pastelRosa/40 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h3 class="font-fredoka text-lg font-bold text-pastelTexto flex items-center gap-2">
+                        <span>📅 Agenda para:</span>
+                        <span id="selectedDateTitle" class="text-pastelRosa font-semibold">Selecciona un día</span>
+                    </h3>
+                    <div id="selectedDateTasks" class="mt-2 text-sm text-pastelTextoMuted">
+                        Haz clic en un día del calendario para ver eventos o programar un pendiente.
+                    </div>
+                </div>
+                <button onclick="openAddTaskModalWithDate()" class="bg-pastelLilaDark hover:bg-pastelLilaDark/90 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition shadow-button active:translate-y-1 active:shadow-none flex items-center gap-2 self-start md:self-auto">
+                    <span aria-hidden="true">+</span> Agendar Tarea
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 3: PENDIENTES (BOARD) ==================== -->
+        <section id="tab-pendientes" class="tab-content space-y-6">
+            
+            <!-- Controls & Add Task Button -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/80 p-4 rounded-2xl border border-pastelBorde">
+                
+                <!-- Filter Tabs -->
+                <div class="flex gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+                    <button onclick="setFilter('all')" id="filter-all" class="filter-btn active text-xs font-bold px-3 py-2 rounded-xl bg-pastelLila text-pastelTexto border border-pastelLilaDark/40">
+                        Todos
+                    </button>
+                    <button onclick="setFilter('pending')" id="filter-pending" class="filter-btn text-xs font-bold px-3 py-2 rounded-xl bg-white text-pastelTextoMuted border border-gray-200">
+                        ⏳ Por Hacer
+                    </button>
+                    <button onclick="setFilter('completed')" id="filter-completed" class="filter-btn text-xs font-bold px-3 py-2 rounded-xl bg-white text-pastelTextoMuted border border-gray-200">
+                        ✅ Listas
+                    </button>
+                </div>
+
+                <button onclick="openAddTaskModal()" class="bg-pastelRosa hover:bg-pastelRosa/90 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition shadow-buttonRosa active:translate-y-1 active:shadow-none flex items-center justify-center gap-2">
+                    <span aria-hidden="true">✦</span> Nueva Tarea
+                </button>
+            </div>
+
+            <!-- Task Categories Layout -->
+            <div id="tasksCategoriesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Categories rendered dynamically -->
+            </div>
+        </section>
+
+        <!-- ==================== TAB 4: TEMPORIZADOR POMODORO ==================== -->
+        <section id="tab-pomodoro" class="tab-content space-y-6">
+            <div class="max-w-xl mx-auto bg-pastelCremaCard p-8 rounded-3xl border-2 border-pastelLilaDark/40 shadow-sticky text-center relative overflow-hidden">
+                
+                <div class="washi-tape washi-tape-pink"></div>
+
+                <!-- Companion Sticker Mascot -->
+                <div class="mx-auto w-28 h-28 mb-3 float-sticker">
+                    <svg id="timerMascot" viewBox="0 0 100 100" fill="none">
+                        <!-- Clock Friend -->
+                        <circle cx="50" cy="55" r="32" fill="#B5EAD7" stroke="#4A3E56" stroke-width="2.5"/>
+                        <circle cx="50" cy="55" r="25" fill="#FFFFFF"/>
+                        <!-- Bell ears -->
+                        <path d="M25 28 C 22 18, 38 18, 35 28 Z" fill="#FFB7B2" stroke="#4A3E56" stroke-width="2"/>
+                        <path d="M75 28 C 78 18, 62 18, 65 28 Z" fill="#FFB7B2" stroke="#4A3E56" stroke-width="2"/>
+                        <!-- Cute Face inside clock -->
+                        <circle cx="43" cy="52" r="2.5" fill="#4A3E56"/>
+                        <circle cx="57" cy="52" r="2.5" fill="#4A3E56"/>
+                        <path d="M47 57 Q 50 60 53 57" stroke="#4A3E56" stroke-width="2" stroke-linecap="round"/>
+                        <ellipse cx="39" cy="55" rx="3" ry="1.5" fill="#FFB7B2"/>
+                        <ellipse cx="61" cy="55" rx="3" ry="1.5" fill="#FFB7B2"/>
+                        <!-- Clock hands -->
+                        <path d="M50 55 L 50 42" stroke="#FFB7B2" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M50 55 L 58 55" stroke="#FFB7B2" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+
+                <!-- Timer Mode Selector -->
+                <div class="inline-flex p-1.5 bg-white/80 rounded-2xl border border-pastelLilaDark/30 mb-6 gap-1">
+                    <button onclick="setTimerMode('study')" id="mode-study" class="px-3.5 py-1.5 rounded-xl font-fredoka text-xs font-bold transition bg-pastelLilaDark text-white shadow-sm">
+                        📚 Estudio (25m)
+                    </button>
+                    <button onclick="setTimerMode('shortBreak')" id="mode-short" class="px-3.5 py-1.5 rounded-xl font-fredoka text-xs font-bold transition text-pastelTextoMuted hover:text-pastelTexto">
+                        ☕ Descanso (5m)
+                    </button>
+                    <button onclick="setTimerMode('longBreak')" id="mode-long" class="px-3.5 py-1.5 rounded-xl font-fredoka text-xs font-bold transition text-pastelTextoMuted hover:text-pastelTexto">
+                        🌿 Recreo (15m)
+                    </button>
+                </div>
+
+                <!-- Timer Display -->
+                <div class="my-2">
+                    <div id="timerDisplay" class="font-fredoka text-6xl md:text-7xl font-bold text-pastelTexto tracking-wider">
+                        25:00
+                    </div>
+                    <p id="timerStatusText" class="text-xs font-semibold text-pastelTextoMuted mt-2">
+                        ¡Tiempo de enfocar tu mente con ternura! 🌸
+                    </p>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex items-center justify-center gap-4 mt-8">
+                    <button id="btnStartTimer" onclick="toggleTimer()" class="w-36 py-3 bg-pastelMentaDark hover:bg-pastelMentaDark/90 text-white font-fredoka font-bold rounded-2xl shadow-buttonMenta transition text-lg active:translate-y-1 active:shadow-none flex items-center justify-center gap-2">
+                        <span aria-hidden="true">▶</span> <span id="btnStartText">Iniciar</span>
+                    </button>
+                    <button onclick="resetTimer()" class="w-12 h-12 bg-white hover:bg-gray-50 border-2 border-pastelBorde text-pastelTexto rounded-2xl shadow-sm flex items-center justify-center text-lg active:scale-95 transition">
+                        <span aria-hidden="true">↻</span>
+                    </button>
+                </div>
+
+                <!-- Session Counter -->
+                <div class="mt-8 pt-4 border-t border-dashed border-pastelLilaDark/20 flex items-center justify-between text-xs text-pastelTextoMuted">
+                    <span>Sesiones completadas hoy:</span>
+                    <span id="pomoCountBadge" class="font-fredoka text-sm font-bold bg-pastelLila/60 text-pastelTexto px-3 py-1 rounded-full border border-pastelLilaDark/30">
+                        ✨ 0 pomodoros
+                    </span>
+                </div>
+
+            </div>
+        </section>
+
+
+<section id="tab-recordatorios" class="tab-content space-y-6">
+ <div class="reminder-heading"><div><span class="section-kicker">UN POQUITO DE AYUDA</span><h2>Que no se te pase ♡</h2><p>Deja aquí lo importante. Schedule te lo recuerda con cariño.</p></div><button id="addReminder" class="schedule-button primary">＋ Nuevo recordatorio</button></div>
+ <div class="alarm-settings"><div><h3>Así suenan tus recordatorios</h3><p id="soundState">Activa los sonidos para esta sesión.</p></div><div class="sound-settings-fields"><label>Sonido<select id="defaultAlarmSound"><option value="bell">Campanitas</option><option value="melody">Melodía suave</option><option value="digital">Alarma digital</option></select></label><label>Volumen<input type="range" id="alarmVolume" min="0" max="1" step="0.05" value="0.55"></label><label class="sound-toggle"><input type="checkbox" id="soundsEnabled" checked> Sonidos</label><button id="activateSounds" class="schedule-button">Activar sonidos</button><button id="testSound" class="schedule-button">▶ Probar</button></div><div class="notification-row"><button id="enableNotifications" class="schedule-button">Permitir avisos</button><small id="notificationState">Opcional: avisos del navegador mientras la app puede ejecutarse.</small></div></div>
+ <div class="reminders-toolbar"><h3>Tus recordatorios <span id="reminderCount" class="count-pill">0</span></h3><label>Mostrar <select id="reminderFilter"><option value="pending">Pendientes</option><option value="done">Completados</option><option value="all">Todos</option></select></label></div><div id="reminderList"></div>
+ <p class="reminder-limit">Los recordatorios se guardan solo en este dispositivo. Para oír la alarma, deja Schedule abierta y activa los sonidos. Si el sistema suspende la app o está cerrada, el aviso puede llegar al volver a abrirla; no sustituye la alarma del teléfono.</p>
+</section>
+
+    </main>
+
+    <!-- MODAL FOR ADDING / EDITING TASK -->
+    <div id="taskModal" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-pastelCremaCard w-full max-w-md rounded-3xl p-6 border-2 border-pastelLilaDark shadow-2xl relative animate-fade-in">
+            <button onclick="closeAddTaskModal()" class="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center text-pastelTexto hover:bg-pastelRosa hover:text-white transition">
+                <span aria-hidden="true">×</span>
+            </button>
+
+            <h3 class="font-fredoka text-xl font-bold text-pastelTexto mb-4 flex items-center gap-2">
+                <span>🎀</span> Nueva tarea
+            </h3>
+
+            <form id="taskForm" onsubmit="saveTask(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-pastelTexto mb-1">Título de la tarea</label>
+                    <input type="text" id="taskTitle" required placeholder="Ej: Regar la drácena 🌿" 
+                           class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-pastelLilaDark/40 focus:outline-none focus:ring-2 focus:ring-pastelLilaDark bg-white">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-pastelTexto mb-1">Categoría</label>
+                        <select id="taskCategory" class="w-full px-3 py-2 text-sm rounded-xl border border-pastelLilaDark/40 focus:outline-none bg-white">
+                            <option value="Estudio">📚 Estudio</option>
+                            <option value="Personal">🌷 Personal</option>
+                            <option value="Hogar">🏠 Hogar</option>
+                            <option value="Proyectos">🎨 Proyectos</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-pastelTexto mb-1">Prioridad</label>
+                        <select id="taskPriority" class="w-full px-3 py-2 text-sm rounded-xl border border-pastelLilaDark/40 focus:outline-none bg-white">
+                            <option value="Normal">⭐ Normal</option>
+                            <option value="Importante">🌸 Importante</option>
+                            <option value="Urgente">🔥 Urgente</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-pastelTexto mb-1">Fecha programada</label>
+                    <input type="date" id="taskDueDate" class="w-full px-3 py-2 text-sm rounded-xl border border-pastelLilaDark/40 focus:outline-none bg-white">
+                </div>
+
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeAddTaskModal()" class="flex-1 py-2.5 rounded-xl text-sm font-bold border border-pastelBorde bg-white hover:bg-gray-50 text-pastelTexto transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-xl text-sm font-bold bg-pastelRosa hover:bg-pastelRosa/90 text-white shadow-buttonRosa active:translate-y-1 active:shadow-none transition">
+                        Guardar Tarea ✨
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    
+<script src="./static/demo-store.js"></script><script src="./static/base.js"></script><script src="./static/app.js"></script>
+<dialog id="reminderDialog" class="schedule-dialog"><form id="reminderForm"><div class="schedule-card-title"><h2 id="reminderDialogTitle">Un recordatorio para ti</h2><button type="button" id="closeReminder" class="icon-close" aria-label="Cerrar recordatorio">×</button></div><label for="reminderTitle">¿Qué quieres recordar?</label><input id="reminderTitle" required maxlength="200" placeholder="Entregar mi trabajo, tomar un descanso…"><label for="reminderAt">Fecha y hora</label><input id="reminderAt" type="datetime-local" required><div class="reminder-form-grid"><label>Sonido<select id="reminderSound"><option value="bell">Campanitas</option><option value="melody">Melodía suave</option><option value="digital">Alarma digital</option></select></label><label>Repetir<select id="reminderRepeat"><option value="none">Solo una vez</option><option value="daily">Cada día</option></select></label></div><button type="button" id="previewReminderSound" class="schedule-button">▶ Escuchar sonido</button><label for="reminderTask">Tarea relacionada (opcional)</label><select id="reminderTask"><option value="">Sin vincular a una tarea</option></select><p id="reminderFormError" role="alert" class="notice-error"></p><div class="schedule-actions"><button type="button" id="cancelReminder" class="schedule-button">Cancelar</button><button type="submit" class="schedule-button primary">Guardar recordatorio</button></div></form></dialog>
+<div id="scheduleAlarm" class="schedule-alarm" role="dialog" aria-modal="true" aria-labelledby="alarmTitle" hidden><div class="alarm-sheet"><img src="./icons/heart.png" alt="" width="72" height="72"><p class="section-kicker">UN RECORDATORIO PARA TI</p><h2 id="alarmTitle"></h2><p id="alarmTime"></p><small id="alarmSoundHint"></small><div class="schedule-actions"><button id="alarmStop" class="schedule-button">Detener sonido</button><button id="alarmSnooze" class="schedule-button">Posponer 5 min</button><button id="alarmDone" class="schedule-button primary">Hecho ♡</button></div></div></div>
+<script src="./static/schedule-core.js"></script><script src="./static/schedule.js"></script></body>
+</html>

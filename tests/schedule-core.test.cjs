@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict');if(!globalThis.crypto)globalThis.crypto=require('node:crypto').webcrypto;const C=require('../static/schedule-core.js');
+const now=new Date(2026,9,27,10,0).getTime();
+const s=C.empty();const n=C.note({title:'',body:'Mi idea\nDetalles'},now,C.uuid());assert.equal(n.title,'Mi idea');assert.equal(n.body,'Mi idea\nDetalles');assert.throws(()=>C.note({title:'x',body:' '},now,'x'));
+const r=C.reminder({title:'Entregar trabajo',at:now+60000,sound:'bell',repeat:'daily'},now,C.uuid());s.reminders.push(r);assert.equal(C.due(s,now).length,0);assert.equal(C.due(s,now+60000).length,1);
+r.status='ringing';C.snooze(s,r.id,now+60000);assert.equal(r.at,now+360000);assert.equal(r.status,'pending');
+C.finish(s,r.id,now+360000);assert.equal(r.status,'pending');assert(r.at>now+360000);assert.equal(new Date(r.at).getHours(),10);
+const once=C.reminder({title:'Una vez',at:now+1000,sound:'melody',repeat:'none'},now,C.uuid());s.reminders.push(once);C.finish(s,once.id,now+2000);assert.equal(once.status,'done');assert.equal(C.due(s,now+5000).length,0);
+assert.throws(()=>C.reminder({title:'Viejo',at:now-1,sound:'bell',repeat:'none'},now,'x'));
+assert.throws(()=>C.decode('{bad json'));assert.throws(()=>C.decode('{"version":1}'));assert.equal(C.decode(JSON.stringify(s)).reminders.length,2);
+assert.match(C.uuid(),/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+console.log('PASS: notas validas, borradores, recordatorios futuros, vencimientos, posponer, repeticion diaria, completar y persistencia.');
